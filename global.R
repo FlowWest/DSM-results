@@ -1,0 +1,10 @@
+library(shiny)
+library(shinycssloaders)
+library(shinythemes)
+library(tidyverse)
+
+actions <- read_rds('data/actions.rds')
+diversity_groups <- read_rds('data/diversity_groups.rds')
+juv_biomass_chipps <- read_rds('data/juv_biomass_chipps.rds')
+nat_spawners <- read_rds('data/nat_spawners.rds')
+viability <- read_rds('data/viability.rds')
