@@ -8,7 +8,8 @@ library(stringr)
 # MaxAdults_withDGs = maximize adult returns but make sure to work in each diversity group each year
 
 scenarios <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 'MinAdults_withDGs',
-               'MaxAdults_NOHatcheryStreams', 'MaxAdults_onlyHatcheryStreams')
+               'MaxAdults_NOHatcheryStreams', 'MaxAdults_onlyHatcheryStreams', 
+               'NoActionsWR', 'OneActionWR', 'TwoActionsWR')
 file_paths <- paste0('data/', scenarios, '.xlsx')
 
 # Natural Spawners ----
@@ -80,8 +81,14 @@ viability %>%
 actions <- map2_df(file_paths[-1], scenarios[-1],
         ~ mutate(read_excel(path = .x, sheet = 'Actions'), scenario = .y))
 
-action_lookup <- c('Spawning Habitat - 1 acres', 'Inchannel Rearing Habitat - 2 acres', 
-                   'Floodplain Habitat - 2 acres', 'Survival - 0.5%')
+action_units <- c(1, 2, 2, .5)
+names(action_units) <- c('Spawning Habitat', 'Inchannel Rearing Habitat', 
+                         'Floodplain Habitat', 'Survival')
+
+# action_lookup <- c('Spawning Habitat - 1 acres', 'Inchannel Rearing Habitat - 2 acres', 
+#                    'Floodplain Habitat - 2 acres', 'Survival - 0.5%')
+action_lookup <- c('Spawning Habitat', 'Inchannel Rearing Habitat', 
+                   'Floodplain Habitat', 'Survival')
 names(action_lookup) <- as.character(2:5)
 
 actions %>% 
