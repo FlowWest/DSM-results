@@ -3,12 +3,22 @@ library(shinycssloaders)
 library(shinythemes)
 library(tidyverse)
 library(plotly)
+library(stringr)
 
 actions <- read_rds('data/actions.rds')
 diversity_groups <- read_rds('data/diversity_groups.rds')
 juv_biomass_chipps <- read_rds('data/juv_biomass_chipps.rds')
 nat_spawners <- read_rds('data/nat_spawners.rds')
 viability <- read_rds('data/viability.rds')
+
+scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
+               'Minimum Adults with Diversity Groups', 'Maximum Adults with No Hatchery Streams',
+               'Maximum Adults with Only Hatchery Streams')
+names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
+                      'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
+                      'MaxAdults_onlyHatcheryStreams')
+
+
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
   select(Watershed, SR_fry) %>% 
@@ -46,8 +56,8 @@ selected_actions %>%
   plot_ly(y = ~watershed, x = ~count, color = ~action_description,
           type = 'bar', orientation = 'h', hoverinfo = 'text',
   text = ~paste('</br>', count, 'units of', action_description, '-', quantity, units,
-                '</br> Spring Run:', sr, 
-                '</br> Winter Run:', wr)) %>% 
+                '</br> Spring Run:', str_to_title(sr), 
+                '</br> Winter Run:', str_to_title(wr))) %>% 
   layout(yaxis = list(title = ''), xaxis = list(title = ''), barmode = 'stack',
          legend = list(orientation = 'h')) %>% 
   config(displayModeBar = FALSE)
@@ -58,26 +68,33 @@ valley_wide_biomass <- juv_biomass_chipps %>%
   group_by(scenario, year) %>% 
   summarise(juv_biomass = sum(biomass))
 
+no_action_end_biomass <- valley_wide_biomass %>% 
+  filter(scenario == 'NoActions', year == 25) %>% 
+  pull(juv_biomass)
+
+valley_wide_biomass %>% 
+  filter(year == 25) %>% 
+  ungroup() %>% 
+  mutate(no_action_end = no_action_end_biomass,
+         `Percent Change from No Actions` = 
+           paste(round(((juv_biomass - no_action_end) / no_action_end) * 100, 1), '%'),
+         Scenario = scenario_names[scenario]) %>% 
+  select(Scenario, `Percent Change from No Actions`)
+
 valley_wide_nat_spawners <- nat_spawners %>%
   group_by(scenario, year) %>% 
   summarise(nat_spawners = sum(nat_spawners))
 
-unique(valley_wide_biomass$scenario)
-
-valley_wide_biomass %>% 
-  filter(scenario %in% c('NoActions', 'MaxAdults', 'MaxAdults_withDGs')) %>%
-  ggplot(aes(year, juv_biomass, color = scenario)) +
-  geom_line()
+no_action_end_nat_spawners <- valley_wide_nat_spawners %>% 
+  filter(scenario == 'NoActions', year == 25) %>% 
+  pull(nat_spawners)
 
 valley_wide_nat_spawners %>% 
-  filter(scenario %in% c('NoActions', 'MaxAdults', 'MaxAdults_withDGs')) %>%
-  ggplot(aes(year, nat_spawners, color = scenario)) +
-  geom_line()
+  filter(year == 25) %>% 
+  ungroup() %>% 
+  mutate(no_action_end = no_action_end_nat_spawners,
+         `Percent Change from No Actions` = 
+           paste(round(((nat_spawners - no_action_end) / no_action_end) * 100, 1), '%'),
+         Scenario = scenario_names[scenario]) %>% 
+  select(Scenario, `Percent Change from No Actions`)
 
-# don't include
-viability %>% 
-  filter(scenario %in% c('NoActions', 'MaxAdults', 'MaxAdults_NOHatcheryStreams', 
-                         'MaxAdults_onlyHatcheryStreams')) %>% 
-  ggplot(aes(year, viability_count, fill = scenario)) +
-  geom_col() +
-  facet_wrap(~diversity_group)
