@@ -4,6 +4,7 @@ library(shinythemes)
 library(tidyverse)
 library(plotly)
 library(stringr)
+library(DT)
 
 actions <- read_rds('data/actions.rds')
 diversity_groups <- read_rds('data/diversity_groups.rds')
@@ -52,17 +53,6 @@ selected_actions <- actions %>%
          quantity = count * action_units[action_description],
          units = units[action_description]) 
 
-selected_actions %>% 
-  plot_ly(y = ~watershed, x = ~count, color = ~action_description,
-          type = 'bar', orientation = 'h', hoverinfo = 'text',
-  text = ~paste('</br>', count, 'units of', action_description, '-', quantity, units,
-                '</br> Spring Run:', str_to_title(sr), 
-                '</br> Winter Run:', str_to_title(wr))) %>% 
-  layout(yaxis = list(title = ''), xaxis = list(title = ''), barmode = 'stack',
-         legend = list(orientation = 'h')) %>% 
-  config(displayModeBar = FALSE)
-
-
 # example stats ----
 valley_wide_biomass <- juv_biomass_chipps %>% 
   group_by(scenario, year) %>% 
@@ -72,14 +62,14 @@ no_action_end_biomass <- valley_wide_biomass %>%
   filter(scenario == 'NoActions', year == 25) %>% 
   pull(juv_biomass)
 
-valley_wide_biomass %>% 
+biomass <- valley_wide_biomass %>% 
   filter(year == 25) %>% 
   ungroup() %>% 
   mutate(no_action_end = no_action_end_biomass,
-         `Percent Change from No Actions` = 
+         `Juvenile Biomass at Chipps` = 
            paste(round(((juv_biomass - no_action_end) / no_action_end) * 100, 1), '%'),
          Scenario = scenario_names[scenario]) %>% 
-  select(Scenario, `Percent Change from No Actions`)
+  select(Scenario, `Juvenile Biomass at Chipps`)
 
 valley_wide_nat_spawners <- nat_spawners %>%
   group_by(scenario, year) %>% 
@@ -89,12 +79,21 @@ no_action_end_nat_spawners <- valley_wide_nat_spawners %>%
   filter(scenario == 'NoActions', year == 25) %>% 
   pull(nat_spawners)
 
-valley_wide_nat_spawners %>% 
+
+spawners <- valley_wide_nat_spawners %>% 
   filter(year == 25) %>% 
   ungroup() %>% 
   mutate(no_action_end = no_action_end_nat_spawners,
-         `Percent Change from No Actions` = 
+         `Natural Spawners` = 
            paste(round(((nat_spawners - no_action_end) / no_action_end) * 100, 1), '%'),
          Scenario = scenario_names[scenario]) %>% 
-  select(Scenario, `Percent Change from No Actions`)
+  select(Scenario, `Natural Spawners`)
+
+
+percent_change_from_no_action <- biomass %>% 
+  left_join(spawners)
+
+
+
+
 
