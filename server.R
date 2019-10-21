@@ -1,8 +1,35 @@
 server <- function(input, output) {
-  output$percent_change_table <- DT::renderDataTable(percent_change_from_no_action)
+  
+  selected_scenario <- reactive({
+    idx <- input$percent_change_table_rows_selected
+    scenario_table_name <- percent_change_from_no_action[idx, ]$Scenario
+    scenario_names_to_scenario[scenario_table_name]
+  })
+  
+  selected_actions <- reactive({
+    actions %>%
+      filter(scenario == selected_scenario()) %>% 
+      group_by(watershed, action_description) %>% 
+      summarise(count = n()) %>% 
+      filter(!is.na(action_description)) %>% 
+      mutate(sr = watershed %in% sr_exists,
+             wr = watershed %in% wr_exists,
+             quantity = count * action_units[action_description],
+             units = units[action_description]) 
+  })
+
+  
+  output$percent_change_table <- DT::renderDataTable(
+    percent_change_from_no_action, 
+    selection = "single",
+    options = list(dom = "t"))
   
   output$actions_plot <- renderPlotly({
-    selected_actions %>% 
+    
+    validate(need(length(selected_scenario()) > 0, "Select a Scenario to View ..."), 
+             errorClass = "app-errors")
+    
+    selected_actions() %>% 
       plot_ly(y = ~watershed, x = ~count, color = ~action_description,
               type = 'bar', orientation = 'h', hoverinfo = 'text',
               text = ~paste('</br>', count, 'units of', action_description, '-', quantity, units,

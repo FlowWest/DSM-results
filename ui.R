@@ -1,6 +1,7 @@
 shinyUI(
   fluidPage(
     theme = shinythemes::shinytheme("readable"), 
+    includeCSS("www/styles.css"),
     titlePanel("DSM Results", windowTitle = "DSM Results"),
     column(width = 4, 
            tags$h2("Percent Change from No Actions"),

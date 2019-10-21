@@ -20,6 +20,9 @@ names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_wit
                       'MaxAdults_onlyHatcheryStreams')
 
 
+scenario_names_to_scenario <- names(scenario_names)
+names(scenario_names_to_scenario) <- as.character(scenario_names)
+
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
   select(Watershed, SR_fry) %>% 
@@ -37,21 +40,6 @@ names(action_units) <- c('Spawning Habitat', 'Inchannel Rearing Habitat',
 units <- c(rep('acres', 3), '%')
 names(units) <- c('Spawning Habitat', 'Inchannel Rearing Habitat', 
                   'Floodplain Habitat', 'Survival')
-
-# example plot of actions -----------
-watershed_order <- rev(unique(actions$watershed))
-
-# Action plot
-# selected scenario should be a reactive activated by clicking on table
-selected_actions <- actions %>%
-  filter(scenario == 'MaxAdults') %>% 
-  group_by(watershed, action_description) %>% 
-  summarise(count = n()) %>% 
-  filter(!is.na(action_description)) %>% 
-  mutate(sr = watershed %in% sr_exists,
-         wr = watershed %in% wr_exists,
-         quantity = count * action_units[action_description],
-         units = units[action_description]) 
 
 # example stats ----
 valley_wide_biomass <- juv_biomass_chipps %>% 
