@@ -14,6 +14,19 @@ viability <- read_rds('data/viability.rds')
 
 watershed_order <- unique(actions$watershed)
 
+scenario_definitions <- c(
+  "No actions are undertaken to increase habitat or survival.",
+  "Annual maximization of inputs that result in maximum natural spawners",
+  "Annual minimization of inputs",
+  "Annual maximization of inputs that result in maximum natural spawners, with an additional requirement that at least one unit is expended in each of the four diversity groups each year. Diversity groups were developed from the Central Valley Chinook Salmon & Steelhead Recovery Plan (NOAA 2014) https://archive.fisheries.noaa.gov/wcr/publications/recovery_planning/salmon_steelhead/domains/california_central_valley/cv_chin_stlhd_r_plan_fs_071614.pdf",
+  "Annual minimization of inputs, with an additional requirement that at least one unit is expended in each of the four diversity groups each year. Diversity groups were developed from the Central Valley Chinook Salmon & Steelhead Recovery Plan (NOAA 2014) https://archive.fisheries.noaa.gov/wcr/publications/recovery_planning/salmon_steelhead/domains/california_central_valley/cv_chin_stlhd_r_plan_fs_071614.pdf",
+  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams without an active fish hatchery",
+  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams with an active fish hatchery"
+)
+
+names(scenario_definitions) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
+                                 'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
+                                 'MaxAdults_onlyHatcheryStreams')
 
 
 scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
