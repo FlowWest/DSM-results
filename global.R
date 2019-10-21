@@ -107,7 +107,9 @@ spawners <- valley_wide_nat_spawners %>%
 
 
 percent_change_from_no_action <- biomass %>% 
-  left_join(spawners)
+  left_join(spawners) %>% 
+  filter(Scenario != "No Actions")
+  
 
 
 
