@@ -26,7 +26,8 @@ server <- function(input, output) {
   
   output$actions_plot <- renderPlotly({
     
-    validate(need(length(selected_scenario()) > 0, "Select a Scenario to View ..."), 
+    validate(need(length(selected_scenario()) > 0, 
+                  "Select a Scenario to View Action Unit Results"), 
              errorClass = "app-errors")
     
     selected_actions() %>% 
@@ -40,4 +41,9 @@ server <- function(input, output) {
       config(displayModeBar = FALSE)
     
   })
+  
+  output$actions_summary <- DT::renderDataTable(actions_summary, 
+                                                options = list(dom = "t", 
+                                                               pageLength = 100), 
+                                                escape = FALSE)
 }

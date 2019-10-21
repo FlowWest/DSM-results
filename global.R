@@ -12,6 +12,10 @@ juv_biomass_chipps <- read_rds('data/juv_biomass_chipps.rds')
 nat_spawners <- read_rds('data/nat_spawners.rds')
 viability <- read_rds('data/viability.rds')
 
+watershed_order <- unique(actions$watershed)
+
+
+
 scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
                'Minimum Adults with Diversity Groups', 'Maximum Adults with No Hatchery Streams',
                'Maximum Adults with Only Hatchery Streams')
@@ -22,6 +26,30 @@ names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_wit
 
 scenario_names_to_scenario <- names(scenario_names)
 names(scenario_names_to_scenario) <- as.character(scenario_names)
+
+actions_summary <- actions %>% 
+  mutate(action_occured = ifelse(!is.na(action), TRUE, FALSE), 
+         scenario = scenario_names[scenario]) %>% 
+  group_by(watershed, scenario) %>% 
+  summarise(
+    total_actions = sum(action_occured)
+  ) %>% ungroup() %>% 
+  spread(scenario, total_actions) %>% 
+  mutate(watershed = factor(watershed, levels = watershed_order)) %>% 
+  arrange(watershed)
+
+names(actions_summary) <- c(
+  "Watershed", 
+  "Maximum </br> Adults", 
+  "Maximum Adults </br> with Diversity Groups", 
+  "Maximum Adults </br> with No Hatchery Streams", 
+  "Maximum Adults </br> with Only Hatchery Streams", 
+  "Minimum </br> Adults", 
+  "Minimum Adults </br> with Diversity Groups")
+
+# names(actions_summary) <-
+#   sprintf('<div style="transform:rotate(-45deg);margin-top:30px;">%s</div>', names(actions_summary))
+
 
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
