@@ -11,6 +11,7 @@ shinyUI(
              tags$h3("Action Units"),
              plotlyOutput("actions_plot"), 
              tags$br(),
+             uiOutput("scenario_definition"),
              tags$br())
     ), 
     fluidRow(

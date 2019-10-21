@@ -42,6 +42,33 @@ server <- function(input, output) {
     
   })
   
+  output$scenario_definition <- renderUI({
+    
+    validate(need(length(selected_scenario()) > 0, 
+                  ""), 
+             errorClass = "app-errors") 
+    
+    if (
+      names(selected_scenario()) %in%
+      c('Maximum Adults with Diversity Groups', 'Minimum Adults with Diversity Groups')
+    ) {
+      tagList(
+        tags$p(tags$b(paste0(names(selected_scenario()), ": ")), 
+               scenario_definitions[selected_scenario()]),
+        tags$p("Diversity groups were developed from the Central Valley Chinook Salmon & Steelhead Recovery Plan ",
+               tags$a("(NOAA 2014)", target = "_blank",
+                      href = "https://archive.fisheries.noaa.gov/wcr/publications/recovery_planning/salmon_steelhead/domains/california_central_valley/cv_chin_stlhd_r_plan_fs_071614.pdf"))
+        
+      )
+    } else {
+      tags$p(tags$b(paste0(names(selected_scenario()), ": ")), 
+             scenario_definitions[selected_scenario()])
+    }
+    
+    
+    
+  })
+  
   output$actions_summary <- DT::renderDataTable(actions_summary, 
                                                 options = list(dom = "t", 
                                                                pageLength = 100), 
