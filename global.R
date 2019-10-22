@@ -14,7 +14,6 @@ viability <- read_rds('data/viability.rds')
 
 watershed_order <- unique(actions$watershed)
 
-
 scenario_definitions <- c(
   "No actions are undertaken to increase habitat or survival.",
   "Annual maximization of inputs that result in maximum natural spawners",
@@ -29,14 +28,12 @@ names(scenario_definitions) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdul
                                  'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
                                  'MaxAdults_onlyHatcheryStreams')
 
-
 scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
                'Minimum Adults with Diversity Groups', 'Maximum Adults with No Hatchery Streams',
                'Maximum Adults with Only Hatchery Streams')
 names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
                       'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
                       'MaxAdults_onlyHatcheryStreams')
-
 
 scenario_names_to_scenario <- names(scenario_names)
 names(scenario_names_to_scenario) <- as.character(scenario_names)
@@ -50,7 +47,8 @@ actions_summary <- actions %>%
   ) %>% ungroup() %>% 
   spread(scenario, total_actions) %>% 
   mutate(watershed = factor(watershed, levels = watershed_order)) %>% 
-  arrange(watershed)
+  arrange(watershed) %>% 
+  filter(!(watershed %in% c('Yolo Bypass', 'Sutter Bypass')))
 
 names(actions_summary) <- c(
   "Watershed", 
@@ -60,11 +58,6 @@ names(actions_summary) <- c(
   "Maximum Adults </br> with Only Hatchery Streams", 
   "Minimum </br> Adults", 
   "Minimum Adults </br> with Diversity Groups")
-
-# names(actions_summary) <-
-#   sprintf('<div style="transform:rotate(-45deg);margin-top:30px;">%s</div>', names(actions_summary))
-
-
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
   select(Watershed, SR_fry) %>% 
@@ -109,7 +102,6 @@ no_action_end_nat_spawners <- valley_wide_nat_spawners %>%
   filter(scenario == 'NoActions', year == 25) %>% 
   pull(nat_spawners)
 
-
 spawners <- valley_wide_nat_spawners %>% 
   filter(year == 25) %>% 
   ungroup() %>% 
@@ -118,7 +110,6 @@ spawners <- valley_wide_nat_spawners %>%
            paste(round(((nat_spawners - no_action_end) / no_action_end) * 100, 1), '%'),
          Scenario = scenario_names[scenario]) %>% 
   select(Scenario, `Natural Spawners`)
-
 
 percent_change_from_no_action <- biomass %>% 
   left_join(spawners) %>% 
