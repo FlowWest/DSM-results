@@ -6,10 +6,20 @@ library(plotly)
 library(stringr)
 library(DT)
 
-actions <- read_rds('data/actions.rds')
+actions <- bind_rows(
+  read_rds('data/actions.rds'),
+  read_rds('data/actions_additional_results.rds')
+  )
+
 diversity_groups <- read_rds('data/diversity_groups.rds')
-juv_biomass_chipps <- read_rds('data/juv_biomass_chipps.rds')
-nat_spawners <- read_rds('data/nat_spawners.rds')
+juv_biomass_chipps <- bind_rows(
+  read_rds('data/juv_biomass_chipps.rds'), 
+  read_rds('data/juv_biomass_chipps_additional_results.rds')
+  )
+nat_spawners <- bind_rows(
+  read_rds('data/nat_spawners.rds'), 
+  read_rds('data/nat_spawners_additional_result.rds')
+  )
 viability <- read_rds('data/viability.rds')
 
 watershed_order <- unique(actions$watershed)
@@ -28,12 +38,42 @@ names(scenario_definitions) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdul
                                  'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
                                  'MaxAdults_onlyHatcheryStreams')
 
-scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
-               'Minimum Adults with Diversity Groups', 'Maximum Adults with No Hatchery Streams',
-               'Maximum Adults with Only Hatchery Streams')
-names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
-                      'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
-                      'MaxAdults_onlyHatcheryStreams')
+scenario_names <- c(
+  'No Actions', 
+  'Maximum Adults', 
+  'Minimum Adults', 
+  'Maximum Adults with Diversity Groups',
+  'Minimum Adults with Diversity Groups', 
+  'Maximum Adults with No Hatchery Streams',
+  'Maximum Adults with Only Hatchery Streams',
+  "In-Channel Only - Urkov",
+  "Spring-run In-Channel - Phillis1",
+  "Spring-run In-Channel - Phillis2",
+  "Fall-run Diversity Group Optimized",
+  "Fall-run Optimized - Beakes",
+  "Fall-run Optimized - Bilski",
+  "In-Channel Only - Brown",
+  "In-Channel Only - Bilski",
+  "In-Channel Only - Mainstem Sac",
+  "In-Channel Only - Berry",
+  "In-Channel Only - Peterson",
+  "Floodplain Only - Mainstem Sac",
+  "Winter-run Optimized",
+  "Spring-run Optimized"
+)
+names(scenario_names) <- c(
+  'NoActions', 
+  'MaxAdults', 
+  'MinAdults', 'MaxAdults_withDGs', 
+  'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
+  'MaxAdults_onlyHatcheryStreams',
+  "In-Channel Only - Urkov", "Spring-run In-Channel - Phillis1",
+  "Spring-run In-Channel - Phillis2", "Fall-run Diversity Group Optimized",
+  "Fall-run Optimized - Beakes", "Fall-run Optimized - Bilski",
+  "In-Channel Only - Brown", "In-Channel Only - Bilski", "In-Channel Only - Mainstem Sac",
+  "In-Channel Only - Berry", "In-Channel Only - Peterson", "Floodplain Only - Mainstem Sac",
+  "Winter-run Optimized", "Spring-run Optimized"
+  )
 
 scenario_names_to_scenario <- names(scenario_names)
 names(scenario_names_to_scenario) <- as.character(scenario_names)
@@ -57,7 +97,22 @@ names(actions_summary) <- c(
   "Maximum Adults </br> with No Hatchery Streams", 
   "Maximum Adults </br> with Only Hatchery Streams", 
   "Minimum </br> Adults", 
-  "Minimum Adults </br> with Diversity Groups")
+  "Minimum Adults </br> with Diversity Groups",
+  "In-Channel Only (Urkov)",
+  "In-Channel Only (Brown)",
+  "In-Channel Only (Bilsky)",
+  "In-Channel Only (Mainstem Sac)",
+  "In-Channel Only (Berry)",
+  "In-Channel Only (Peterson)",
+  "Floodplain Only (Mainstem Sac)",
+  "Winter Run Optimized",
+  "Spring Run Optimized",
+  "Spring-run In-Channel - Phillis1",
+  "Spring-run In-Channel - Phillis2",
+  "Fall-run Diversity Group Optimized",
+  "Fall-run Optimized - Beakes",
+  "Fall-run Optimized - Bilski"
+  )
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
   select(Watershed, SR_fry) %>% 

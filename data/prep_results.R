@@ -118,10 +118,11 @@ natural_spawners_additional_results <-
       head(-1) %>% # remove summary last row
       mutate(watershed = cvpiaData::watershed_ordering$watershed, 
              scenario = scenario_name) %>% 
-      gather(year, nat_spawners, -watershed, -scenario)
+      gather(year, nat_spawners, -watershed, -scenario) %>% 
+      mutate(year = as.numeric(year))
   })
 
-write_rds()
+write_rds(natural_spawners_additional_results, "data/nat_spawners_additional_result.rds")
 
 # juv bio mass -------------------------------
 
@@ -135,8 +136,11 @@ juv_biomass_additional_results <-
       head(-1) %>% # remove summary last row
       mutate(watershed = cvpiaData::watershed_ordering$watershed, 
              scenario = scenario_name) %>% 
-      gather(year, biomass, -watershed, -scenario)
+      gather(year, biomass, -watershed, -scenario) %>% 
+      mutate(year = as.numeric(year))
   })
+
+write_rds(juv_biomass_additional_results, "data/juv_biomass_chipps_additional_results.rds")
 
 
 # actions ------------------------------
@@ -146,14 +150,14 @@ actions_sheet <- "Decisions"
 actions_additional_results <- 
   pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
     read_excel(path, sheet = actions_sheet) %>% 
-      transmute(site = as.integer(Site), year = Year, action = Decision) %>% 
-      mutate(scenario = scenario_name) %>% 
+      transmute(site = as.integer(Site), year = as.numeric(Year), action = as.numeric(Decision)) %>% 
       right_join(cvpiaData::watershed_ordering, by = c("site" = "order")) %>% 
-      select(watershed, scenario, year, action) %>% 
-      mutate(action_description = as.character(action_lookup[action]))
+      select(watershed, year, action) %>% 
+      mutate(action_description = as.character(action_lookup[action]), 
+             scenario = scenario_name)
   })
 
-
+write_rds(actions_additional_results, "data/actions_additional_results.rds")
 
 
 
