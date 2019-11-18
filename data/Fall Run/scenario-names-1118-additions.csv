@@ -1,0 +1,16 @@
+scenario_number,scenario_name
+0,No Restoration Actions
+1,In-Channel Only - Urkov
+2,In-Channel Only - Brown
+3,In-Channel Only - Bilski
+4,In-Channel Only - Mainstem Sac
+5,In-Channel Only - Berry
+6,In-Channel Only - Peterson
+7,Floodplain Only - Mainstem Sac
+8,Winter-run Optimized
+9,Spring-run Optimized
+10.1,Spring-run In-Channel - Phillis1
+10.2,Spring-run In-Channel - Phillis2
+11.1,Fall-run Diversity Group Optimized
+12,Fall-run Optimized - Beakes
+13,Fall-run OPtimized - Bilski
