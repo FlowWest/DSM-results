@@ -94,3 +94,68 @@ actions %>%
          action_description = action_lookup[as.character(action)]) %>% 
   write_rds('data/actions.rds')
 
+
+# Additional results provided on 11/18/19 ------------------------------------
+scenario_names <- read_csv("data/Fall Run/scenario-names-1118-additions.csv") %>% 
+  tail(-1)
+
+# dataframe with path and corresponding scenario name 
+scenario_paths <- tibble(
+  path = list.files("data/Fall Run/", full.names = TRUE, pattern = ".xlsx")[-1], 
+  scenario_number = as.numeric(str_match(path, "FallRunScenario([0-9]+\\.?[0-9]?)")[,2])
+  ) %>% 
+  left_join(scenario_names)
+
+# natural spawners ------------------------------
+
+nat_spawn_sheet <- "NatSpawnMean"
+
+natural_spawners_additional_results <- 
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
+    read_excel(path, sheet = nat_spawn_sheet,
+               skip = 1,
+               col_names = paste(6:25)) %>% 
+      head(-1) %>% # remove summary last row
+      mutate(watershed = cvpiaData::watershed_ordering$watershed, 
+             scenario = scenario_name) %>% 
+      gather(year, nat_spawners, -watershed, -scenario)
+  })
+
+write_rds()
+
+# juv bio mass -------------------------------
+
+juv_biomass_sheet <- "JuvBioMean"
+
+juv_biomass_additional_results <- 
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
+    read_excel(path, sheet = juv_biomass_sheet,
+               skip = 1,
+               col_names = paste(6:25)) %>% 
+      head(-1) %>% # remove summary last row
+      mutate(watershed = cvpiaData::watershed_ordering$watershed, 
+             scenario = scenario_name) %>% 
+      gather(year, biomass, -watershed, -scenario)
+  })
+
+
+# actions ------------------------------
+
+actions_sheet <- "Decisions"
+
+actions_additional_results <- 
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
+    read_excel(path, sheet = actions_sheet) %>% 
+      transmute(site = as.integer(Site), year = Year, action = Decision) %>% 
+      mutate(scenario = scenario_name) %>% 
+      right_join(cvpiaData::watershed_ordering, by = c("site" = "order")) %>% 
+      select(watershed, scenario, year, action) %>% 
+      mutate(action_description = as.character(action_lookup[action]))
+  })
+
+
+
+
+
+
+
