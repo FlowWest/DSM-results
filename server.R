@@ -22,7 +22,8 @@ server <- function(input, output) {
   output$percent_change_table <- DT::renderDataTable(
     percent_change_from_no_action, 
     selection = "single",
-    options = list(dom = "t"))
+    extensions = "Scroller",
+    options = list(dom = "t", scrollY = 300, scroller = TRUE))
   
   output$actions_plot <- renderPlotly({
     
@@ -37,7 +38,7 @@ server <- function(input, output) {
                             '</br> Spring Run:', str_to_title(sr), 
                             '</br> Winter Run:', str_to_title(wr))) %>% 
       layout(yaxis = list(title = ''), xaxis = list(title = ''), barmode = 'stack',
-             legend = list(orientation = 'h')) %>% 
+             legend = list(orientation = 'h'), showlegend = TRUE) %>% 
       config(displayModeBar = FALSE)
     
   })

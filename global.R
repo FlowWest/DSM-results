@@ -24,6 +24,7 @@ viability <- read_rds('data/viability.rds')
 
 watershed_order <- unique(actions$watershed)
 
+# TODO move this to a dataframe
 scenario_definitions <- c(
   "No actions are undertaken to increase habitat or survival.",
   "Annual maximization of inputs that result in maximum natural spawners",
@@ -31,12 +32,42 @@ scenario_definitions <- c(
   "Annual maximization of inputs that result in maximum natural spawners, with an additional requirement that at least one unit is expended in each of the four diversity groups each year.",
   "Annual minimization of inputs, with an additional requirement that at least one unit is expended in each of the four diversity groups each year.",
   "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams without an active fish hatchery",
-  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams with an active fish hatchery"
+  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams with an active fish hatchery",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Battle. and Stanislaus ",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Clear, and Stanislaus",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Mokelumne, Clear, and Stanislaus",
+  "Restoration limited to in-channel in Mainstem Sacramento only",
+  "Restoration limited to in-channel Upper Sac, Lower Mid Sac, Cow Creek and Clear",
+  "Restoration limited to in-channel Upper Sac, Lower Mid, and American with some maintenance in Clear and Butte",
+  "Restoration limited to floodplain Upper Sac, Upper Mid, Lower Mid, Lower Sac, and San Joaquin",
+  "Restoration optimized to increase Winter-run population every year (limited to locations where WR occur)",
+  "Restoration optimized to increase Spring-run population every year (limited to locations where SR occur)",
+  "Restoration limited to in-channel equally distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope",
+  "Restoration limited to in-channel distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope, with emphasis on Deer, Mill, and Antelope",
+  "Restoration optimized to increase Fall-run population every year (one action in each diversity group)",
+  "Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Calaveras)",
+  "Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Mokelumne)"
 )
 
-names(scenario_definitions) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
-                                 'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
-                                 'MaxAdults_onlyHatcheryStreams')
+names(scenario_definitions) <- c(
+  'NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
+  'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
+  'MaxAdults_onlyHatcheryStreams', 
+  "In-Channel Only - Urkov",
+  "Spring-run In-Channel - Phillis1",
+  "Spring-run In-Channel - Phillis2",
+  "Fall-run Diversity Group Optimized",
+  "Fall-run Optimized - Beakes",
+  "Fall-run Optimized - Bilski",
+  "In-Channel Only - Brown",
+  "In-Channel Only - Bilski",
+  "In-Channel Only - Mainstem Sac",
+  "In-Channel Only - Berry",
+  "In-Channel Only - Peterson",
+  "Floodplain Only - Mainstem Sac",
+  "Winter-run Optimized",
+  "Spring-run Optimized"
+)
 
 scenario_names <- c(
   'No Actions', 
@@ -78,7 +109,8 @@ names(scenario_names) <- c(
 scenario_names_to_scenario <- names(scenario_names)
 names(scenario_names_to_scenario) <- as.character(scenario_names)
 
-actions_summary <- actions %>% 
+actions_summary <-
+  actions %>% 
   mutate(action_occured = ifelse(!is.na(action), TRUE, FALSE), 
          scenario = scenario_names[scenario]) %>% 
   group_by(watershed, scenario) %>% 
@@ -92,26 +124,26 @@ actions_summary <- actions %>%
 
 names(actions_summary) <- c(
   "Watershed", 
+  "Fall-run Diversity Group Optimized",
+  "Fall-run Optimized - Beakes",
+  "Fall-run Optimized - Bilski",
+  "Floodplain Only (Mainstem Sac)",
+  "In-Channel Only (Berry)",
+  "In-Channel Only (Bilsky)",
+  "In-Channel Only (Brown)",
+  "In-Channel Only (Mainstem Sac)",
+  "In-Channel Only (Peterson)",
+  "In-Channel Only (Urkov)",
   "Maximum </br> Adults", 
   "Maximum Adults </br> with Diversity Groups", 
   "Maximum Adults </br> with No Hatchery Streams", 
   "Maximum Adults </br> with Only Hatchery Streams", 
   "Minimum </br> Adults", 
   "Minimum Adults </br> with Diversity Groups",
-  "In-Channel Only (Urkov)",
-  "In-Channel Only (Brown)",
-  "In-Channel Only (Bilsky)",
-  "In-Channel Only (Mainstem Sac)",
-  "In-Channel Only (Berry)",
-  "In-Channel Only (Peterson)",
-  "Floodplain Only (Mainstem Sac)",
-  "Winter Run Optimized",
-  "Spring Run Optimized",
   "Spring-run In-Channel - Phillis1",
   "Spring-run In-Channel - Phillis2",
-  "Fall-run Diversity Group Optimized",
-  "Fall-run Optimized - Beakes",
-  "Fall-run Optimized - Bilski"
+  "Spring Run Optimized",
+  "Winter Run Optimized"
   )
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 

@@ -96,22 +96,22 @@ actions %>%
 
 
 # Additional results provided on 11/18/19 ------------------------------------
-scenario_names <- read_csv("data/Fall Run/scenario-names-1118-additions.csv") %>% 
+scenario_names <- read_csv("data/Fall-Run-deterministic-results/scenario-names-deterministic-models.csv") %>% 
   tail(-1)
 
 # dataframe with path and corresponding scenario name 
 scenario_paths <- tibble(
-  path = list.files("data/Fall Run/", full.names = TRUE, pattern = ".xlsx")[-1], 
-  scenario_number = as.numeric(str_match(path, "FallRunScenario([0-9]+\\.?[0-9]?)")[,2])
+  path = list.files("data/Fall-Run-deterministic-results/", full.names = TRUE, pattern = ".xlsx")[-1], 
+  scenario_number = as.numeric(str_match(path, "FallRunScenarioDeterministicNEW([0-9]+\\.?[0-9]?)")[,2])
   ) %>% 
   left_join(scenario_names)
 
 # natural spawners ------------------------------
 
-nat_spawn_sheet <- "NatSpawnMean"
+nat_spawn_sheet <- "NatSpawn"
 
 natural_spawners_additional_results <- 
-  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name, scenario_definition) {
     read_excel(path, sheet = nat_spawn_sheet,
                skip = 1,
                col_names = paste(6:25)) %>% 
@@ -126,10 +126,10 @@ write_rds(natural_spawners_additional_results, "data/nat_spawners_additional_res
 
 # juv bio mass -------------------------------
 
-juv_biomass_sheet <- "JuvBioMean"
+juv_biomass_sheet <- "JuvBio"
 
 juv_biomass_additional_results <- 
-  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name, ...) {
     read_excel(path, sheet = juv_biomass_sheet,
                skip = 1,
                col_names = paste(6:25)) %>% 
@@ -148,13 +148,14 @@ write_rds(juv_biomass_additional_results, "data/juv_biomass_chipps_additional_re
 actions_sheet <- "Decisions"
 
 actions_additional_results <- 
-  pmap_df(scenario_paths, function(path, scenario_number, scenario_name) {
-    read_excel(path, sheet = actions_sheet) %>% 
-      transmute(site = as.integer(Site), year = as.numeric(Year), action = as.numeric(Decision)) %>% 
-      right_join(cvpiaData::watershed_ordering, by = c("site" = "order")) %>% 
-      select(watershed, year, action) %>% 
-      mutate(action_description = as.character(action_lookup[action]), 
-             scenario = scenario_name)
+  pmap_df(scenario_paths, function(path, scenario_number, scenario_name, scenario_definitions) {
+    read_excel(path, sheet = actions_sheet, skip = 1, 
+               col_names = paste(6:25)) %>% 
+      bind_cols(select(cvpiaData::watershed_ordering, watershed)) %>%
+      gather(year, action, -watershed) %>% 
+      mutate(action_description = as.character(action_lookup[as.character(action)]), 
+             scenario = scenario_name, 
+              year = as.numeric(year))
   })
 
 write_rds(actions_additional_results, "data/actions_additional_results.rds")

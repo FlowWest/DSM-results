@@ -1,0 +1,16 @@
+scenario_number,scenario_name,scenario_definition
+0,No Restoration Actions,No restoration actions taken on any Central Valley streams
+1,In-Channel Only - Urkov,"Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Battle. and Stanislaus "
+2,In-Channel Only - Brown,"Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Clear, and Stanislaus"
+3,In-Channel Only - Bilski,"Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Mokelumne, Clear, and Stanislaus"
+4,In-Channel Only - Mainstem Sac,Restoration limited to in-channel in Mainstem Sacramento only
+5,In-Channel Only - Berry,"Restoration limited to in-channel Upper Sac, Lower Mid Sac, Cow Creek and Clear"
+6,In-Channel Only - Peterson,"Restoration limited to in-channel Upper Sac, Lower Mid, and American with some maintenance in Clear and Butte"
+7,Floodplain Only - Mainstem Sac,"Restoration limited to floodplain Upper Sac, Upper Mid, Lower Mid, Lower Sac, and San Joaquin"
+8,Winter-run Optimized,Restoration optimized to increase Winter-run population every year (limited to locations where WR occur)
+9,Spring-run Optimized,Restoration optimized to increase Spring-run population every year (limited to locations where SR occur)
+10.1,Spring-run In-Channel - Phillis1,"Restoration limited to in-channel equally distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope"
+10.2,Spring-run In-Channel - Phillis2,"Restoration limited to in-channel distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope, with emphasis on Deer, Mill, and Antelope"
+11.1,Fall-run Diversity Group Optimized,Restoration optimized to increase Fall-run population every year (one action in each diversity group)
+12.1,Fall-run Optimized - Beakes,"Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Calaveras)"
+13.1,Fall-run Optimized - Bilski,"Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Mokelumne)"
